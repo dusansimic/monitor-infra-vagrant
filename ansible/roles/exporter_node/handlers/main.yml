@@ -1,0 +1,8 @@
+---
+
+- name: Restart node_exporter
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: "{{ exporter_node_binary_name }}"
+    state: restarted
+    enabled: true

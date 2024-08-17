@@ -1,0 +1,70 @@
+---
+
+- name: Create disk_usage_exporter system group
+  ansible.builtin.group:
+    name: "{{ exporter_disk_usage_group }}"
+    system: true
+    state: present
+
+- name: Create disk_usage_exporter system user
+  ansible.builtin.user:
+    name: "{{ exporter_disk_usage_user }}"
+    group: "{{ exporter_disk_usage_group }}"
+    shell: /sbin/noshell
+    system: true
+    create_home: false
+    state: present
+
+- name: Download and unpack disk usage exporter tarball
+  ansible.builtin.unarchive:
+    src: >-
+      https://github.com/dundee/disk_usage_exporter/releases/download/v{{- exporter_disk_usage_version -}}
+      /disk_usage_exporter_linux_{{- exporter_disk_usage_arch -}}
+      .tgz
+    dest: "{{ exporter_disk_usage_binary_path }}"
+    remote_src: true
+    include:
+      - "disk_usage_exporter_linux_{{ exporter_disk_usage_arch }}"
+    extra_opts:
+      - --transform
+      - s/disk_usage_exporter_linux_{{ exporter_disk_usage_arch }}/{{ exporter_disk_usage_binary_name }}/
+    owner: "{{ exporter_disk_usage_user }}"
+    group: "{{ exporter_disk_usage_group }}"
+    mode: u=rwx,g=,o=
+    creates: "{{ exporter_disk_usage_binary_path }}/{{ exporter_disk_usage_binary_name }}"
+  notify: Restart disk_usage_exporter
+
+- name: Create config
+  notify: Restart disk_usage_exporter
+  block:
+    - name: Create config directory
+      ansible.builtin.file:
+        path: "{{ exporter_disk_usage_config_path }}"
+        state: directory
+        mode: u=rwx,g=,o=
+        owner: "{{ exporter_disk_usage_user }}"
+        group: "{{ exporter_disk_usage_group }}"
+    - name: Template config file
+      ansible.builtin.template:
+        src: config.yml.j2
+        dest: "{{ exporter_disk_usage_config_path }}/config.yml"
+        mode: u=rw,g=,o=
+        owner: "{{ exporter_disk_usage_user }}"
+        group: "{{ exporter_disk_usage_group }}"
+
+- name: Template disk_usage_exporter systemd unit
+  ansible.builtin.template:
+    src: disk_usage_exporter.service.j2
+    dest: /etc/systemd/system/{{ exporter_disk_usage_binary_name }}.service
+    mode: u=rw,g=r,o=
+    owner: root
+    group: root
+  notify: Restart disk_usage_exporter
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Service is started
+  ansible.builtin.systemd:
+    name: "{{ exporter_node_binary_name }}"
+    state: started

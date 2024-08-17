@@ -1,0 +1,15 @@
+---
+
+- name: Host Install
+  hosts: all
+  become: true
+  roles:
+    - host_prep
+    - docker
+    - role: accounts
+      vars:
+        accounts_user: vagrant
+    - role: monitoring_host
+      vars:
+        monitoring_host_monitoring_user: vagrant
+        monitoring_host_monitoring_group: vagrant

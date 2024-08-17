@@ -1,0 +1,77 @@
+---
+
+- name: Create node_exporter system group
+  ansible.builtin.group:
+    name: "{{ exporter_node_group }}"
+    system: true
+    state: present
+
+- name: Create node_exporter system user
+  ansible.builtin.user:
+    name: "{{ exporter_node_user }}"
+    group: "{{ exporter_node_group }}"
+    shell: /sbin/noshell
+    system: true
+    create_home: false
+    state: present
+
+- name: Create textfile directory
+  ansible.builtin.file:
+    path: "{{ exporter_node_textfile_path }}/textfile_collector"
+    mode: u=rwx,g=rw,o=
+    state: directory
+
+- name: Download and unpack node exporter tarball
+  ansible.builtin.unarchive:
+    src: >-
+      https://github.com/prometheus/node_exporter/releases/download/v{{- exporter_node_version -}}
+      /node_exporter-{{- exporter_node_version -}}
+      .linux-{{- exporter_node_arch -}}
+      .tar.gz
+    dest: "{{ exporter_node_binary_path }}"
+    remote_src: true
+    include:
+      - node_exporter-{{ exporter_node_version }}.linux-{{ exporter_node_arch }}/node_exporter
+    extra_opts:
+      - --strip-components=1
+      - --transform
+      - s/node_exporter/{{ exporter_node_binary_name }}/g
+    owner: "{{ exporter_node_user }}"
+    group: "{{ exporter_node_group }}"
+    mode: u=rwx,g=,o=
+    creates: "{{ exporter_node_binary_path }}/{{ exporter_node_binary_name }}"
+
+- name: Template node_exporter systemd unit
+  ansible.builtin.template:
+    src: node_exporter.service.j2
+    dest: /etc/systemd/system/{{ exporter_node_binary_name }}.service
+    mode: u=rw,g=r,o=
+    owner: root
+    group: root
+  notify: Restart node_exporter
+
+- name: Template node_exporter sysconfig
+  ansible.builtin.template:
+    src: sysconfig.j2
+    dest: "/etc/sysconfig/{{ exporter_node_binary_name }}"
+    mode: u=rw,g=r,o=
+    owner: root
+    group: root
+  notify: Restart node_exporter
+
+- name: Template node_exporter socket unit
+  ansible.builtin.template:
+    src: node_exporter.socket.j2
+    dest: /etc/systemd/system/{{ exporter_node_binary_name }}.socket
+    mode: u=rw,g=r,o=
+    owner: root
+    group: root
+  notify: Restart node_exporter
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Service is started
+  ansible.builtin.systemd:
+    name: "{{ exporter_node_binary_name }}"
+    state: started

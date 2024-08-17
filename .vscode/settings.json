@@ -1,0 +1,13 @@
+{
+  "ansible.python.interpreterPath": "/usr/bin/python3",
+  "files.associations": {
+    "*.yml.j2": "yaml",
+    "*.service.j2": "systemd-unit-file",
+    "docker-compose.yml.j2": "dockercompose",
+    "**/tasks/*.yml": "ansible",
+    "**/vars/*.yml": "ansible"
+  },
+  "yaml.schemas": {
+    "https://json.schemastore.org/prometheus.json": "file:///workspaces/monitor-infra-vagrant/ansible/roles/monitoring_host/templates/prometheus.yml.j2"
+  }
+}

@@ -1,0 +1,9 @@
+---
+
+- name: Setup user account
+  ansible.builtin.user:
+    name: "{{ accounts_user }}"
+    groups:
+      - docker
+    append: true
+    shell: /bin/bash

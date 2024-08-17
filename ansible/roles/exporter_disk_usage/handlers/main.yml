@@ -1,0 +1,8 @@
+---
+
+- name: Restart disk_usage_exporter
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: "{{ exporter_disk_usage_binary_name }}"
+    state: restarted
+    enabled: true

@@ -1,0 +1,26 @@
+services:
+  prometheus:
+    image: "docker.io/prom/prometheus:{{ monitoring_host_prometheus_image_tag }}"
+    volumes:
+      # - "{{ monitoring_host_prometheus_data_path }}:/prometheus"
+      - prom-data:/prometheus
+      - "{{ monitoring_host_prometheus_config_path }}/prometheus.yml:/etc/prometheus/prometheus.yml"
+    networks:
+      - monitoring
+    ports:
+      - "{{ monitoring_host_prometheus_host_port }}:9090/tcp"
+  grafana:
+    image: "docker.io/grafana/grafana-oss:{{ monitoring_host_grafana_image_tag }}"
+    user: "{{ getent_passwd[monitoring_host_monitoring_user].1 }}:{{ getent_passwd[monitoring_host_monitoring_user].2 }}"
+    volumes:
+      - "{{ monitoring_host_grafana_data_path }}:/var/lib/grafana"
+    networks:
+      - monitoring
+    ports:
+      - "{{ monitoring_host_grafana_host_port }}:3000/tcp"
+
+networks:
+  monitoring:
+
+volumes:
+  prom-data:

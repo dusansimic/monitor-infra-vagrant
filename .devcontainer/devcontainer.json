@@ -1,0 +1,19 @@
+{
+	"name": "Ubuntu",
+	"image": "mcr.microsoft.com/devcontainers/base:jammy",
+	"features": {
+		"ghcr.io/devcontainers-contrib/features/ansible:2": {},
+		"ghcr.io/hspaans/devcontainer-features/ansible-lint:1": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.vscode-docker",
+				"redhat.ansible",
+				"marcostazi.VS-code-vagrantfile",
+				"coolbear.systemd-unit-file",
+				"bbenoist.vagrant"
+			]
+		}
+	}
+}

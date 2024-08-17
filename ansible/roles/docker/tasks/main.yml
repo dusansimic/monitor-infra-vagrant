@@ -1,0 +1,37 @@
+---
+
+- name: Add repository
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+    mode: u=rw,g=r,o=r
+    owner: root
+    group: root
+    checksum: sha256:8ab5599eef0afcac10cbd3e8670873efee20fcceb5fb3526a62edeade603cec7
+
+- name: Install packages
+  ansible.builtin.dnf:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+
+- name: Enable daemon
+  ansible.builtin.systemd:
+    name: docker.service
+    enabled: true
+    state: started
+
+- name: Install EPEL repositories
+  ansible.builtin.dnf:
+    name:
+      - epel-release
+
+- name: Install Ansible dependencies
+  ansible.builtin.dnf:
+    name:
+      - python3
+      - python3-docker
+      - python3-yaml

@@ -1,0 +1,11 @@
+---
+
+exporter_node_version: 1.8.2
+exporter_node_arch: amd64
+
+exporter_node_user: node_exporter
+exporter_node_group: node_exporter
+
+exporter_node_binary_path: /usr/local/bin
+exporter_node_binary_name: node_exporter
+exporter_node_textfile_path: /var/lib/node_exporter

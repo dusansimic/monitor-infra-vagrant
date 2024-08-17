@@ -1,0 +1,14 @@
+---
+
+monitoring_host_prometheus_image_tag: v2.53.0
+monitoring_host_prometheus_data_path: /var/lib/prometheus
+monitoring_host_prometheus_config_path: /usr/lib/prometheus
+monitoring_host_prometheus_host_port: "9090"
+
+monitoring_host_grafana_image_tag: "11.1.4"
+monitoring_host_grafana_data_path: /var/lib/grafana
+monitoring_host_grafana_host_port: "3000"
+
+monitoring_host_compose_file_dir: /usr/lib/monitoring
+monitoring_host_monitoring_user: monitoring
+monitoring_host_monitoring_group: monitoring

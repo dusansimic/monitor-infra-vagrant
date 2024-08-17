@@ -1,0 +1,11 @@
+[Unit]
+Description=Node Exporter
+Requires={{ exporter_node_binary_name }}.socket
+
+[Service]
+User={{ exporter_node_user }}
+EnvironmentFile=/etc/sysconfig/{{ exporter_node_binary_name }}
+ExecStart=/usr/local/bin/{{ exporter_node_binary_name }} --web.systemd-socket $OPTIONS
+
+[Install]
+WantedBy=multi-user.target

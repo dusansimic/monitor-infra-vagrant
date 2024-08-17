@@ -1,0 +1,15 @@
+---
+
+exporter_disk_usage_group: disk_usage_exporter
+exporter_disk_usage_user: disk_usage_exporter
+
+exporter_disk_usage_version: 0.6.0
+exporter_disk_usage_arch: amd64
+
+exporter_disk_usage_path: /usr/local
+exporter_disk_usage_binary_path: "{{ exporter_disk_usage_path }}/bin"
+exporter_disk_usage_binary_name: disk_usage_exporter
+exporter_disk_usage_config_path: "{{ exporter_disk_usage_path }}/etc/disk_usage_exporter"
+
+exporter_disk_usage_addr: 0.0.0.0
+exporter_disk_usage_port: 9995

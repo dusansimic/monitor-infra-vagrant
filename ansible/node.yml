@@ -1,0 +1,9 @@
+---
+
+- name: Node Install
+  hosts: all
+  become: true
+  roles:
+    - host_prep
+    - exporter_node
+    - exporter_disk_usage
