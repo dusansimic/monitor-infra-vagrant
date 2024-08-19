@@ -1,0 +1,62 @@
+---
+
+- name: Create dcgm_exporter system group
+  ansible.builtin.group:
+    name: "{{ exporter_dcgm_group }}"
+    system: true
+    state: present
+
+- name: Create dcgm_exporter system user
+  ansible.builtin.user:
+    name: "{{ exporter_dcgm_user }}"
+    group: "{{ exporter_dcgm_group }}"
+    shell: /sbin/noshell
+    system: true
+    create_home: false
+    state: present
+
+- name: Download exporter binary
+  ansible.builtin.get_url:
+    url: >-
+      https://github.com/dusansimic/dcgm-exporter-builder/releases/download/{{ exporter_dcgm_dcgm_version }}
+      -{{ exporter_dcgm_exporter_version }}
+      /dcgm-exporter
+    dest: "{{ exporter_dcgm_binary_path }}/{{ exporter_dcgm_binary_name }}"
+    owner: "{{ exporter_dcgm_user }}"
+    group: "{{ exporter_dcgm_group }}"
+    mode: u=rwx,g=,o=
+
+- name: Create config
+  notify: Restart dcgm_exporter
+  block:
+    - name: Create config directory
+      ansible.builtin.file:
+        path: "{{ exporter_dcgm_config_path }}"
+        state: directory
+        mode: u=rwx,g=,o=
+        owner: "{{ exporter_dcgm_user }}"
+        group: "{{ exporter_dcgm_group }}"
+    - name: Template config file
+      ansible.builtin.template:
+        src: default-counters.csv.j2
+        dest: "{{ exporter_dcgm_config_path }}/counters.csv"
+        mode: u=rw,g=,o=
+        owner: "{{ exporter_dcgm_user }}"
+        group: "{{ exporter_dcgm_group }}"
+
+- name: Template dcgm_exporter systemd unit
+  ansible.builtin.template:
+    src: dcgm_exporter.service.j2
+    dest: /etc/systemd/system/{{ exporter_dcgm_binary_name }}.service
+    mode: u=rw,g=r,o=
+    owner: root
+    group: root
+  notify: Restart dcgm_exporter
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Service is started
+  ansible.builtin.systemd:
+    name: "{{ exporter_dcgm_binary_name }}"
+    state: started

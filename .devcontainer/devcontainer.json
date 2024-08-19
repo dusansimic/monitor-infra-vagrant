@@ -12,7 +12,8 @@
 				"redhat.ansible",
 				"marcostazi.VS-code-vagrantfile",
 				"coolbear.systemd-unit-file",
-				"bbenoist.vagrant"
+				"bbenoist.vagrant",
+				"mechatroner.rainbow-csv"
 			]
 		}
 	}

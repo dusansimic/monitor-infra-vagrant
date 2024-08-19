@@ -1,0 +1,14 @@
+[Unit]
+Description=Prometheus DCGM exporter
+Documentation=https://github.com/NVIDIA/dcgm-exporter
+
+[Service]
+Restart=always
+User={{ exporter_dcgm_user }}
+ExecStart={{ exporter_dcgm_binary_path }}/{{ exporter_dcgm_binary_name }} --collectors {{ exporter_dcgm_config_path }}/collectors.csv --address 0.0.0.0:{{ exporter_dcgm_port }}
+ExecReload=/bin/kill -HUP $MAINPID
+TimeoutStopSec=20s
+SendSIGKILL=no
+
+[Install]
+WantedBy=multi-user.target

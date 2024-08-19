@@ -1,0 +1,14 @@
+---
+
+exporter_dcgm_user: dcgm_exporter
+exporter_dcgm_group: dcgm_exporter
+
+exporter_dcgm_dcgm_version: 3.3.6
+exporter_dcgm_exporter_version: 3.4.2
+
+exporter_dcgm_binary_path: /usr/local/bin
+exporter_dcgm_binary_name: dcgm_exporter
+
+exporter_dcgm_config_path: /usr/etc/dcgm_exporter
+
+exporter_dcgm_port: 9400
